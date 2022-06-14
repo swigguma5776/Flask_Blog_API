@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form action="#" method="post" id="blog-form">
+        <span>
+        <p>Blog Tag:</p>
+        <p><input type ='text' name="tag" placeholder="Example: 'tech'"/></p>
+        <p>Blog Sort By (optional):</p>
+        <p><input type ='text' name="sortby" placeholder="Example: 'likes'"/></p>
+        <p>Blog Sort By direction(optional):</p>
+        <p><input type ='text' name="direction" placeholder="Example: 'asc'"/></p>
+        <p><input type ='submit' value='submit'/></p>
+    </form>
+
+<!-- Artist Collection -->
+
+
+    <h1>{{blogs}}</h1>
+
+{% endblock content %}

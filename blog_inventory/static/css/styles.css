@@ -1,0 +1,9 @@
+body, html{
+    height: 100%;
+    margin: 0; 
+}
+
+#blog-form{
+    margin-left:10vh;
+    margin-top:10vh; 
+}
