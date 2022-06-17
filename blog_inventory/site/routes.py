@@ -8,11 +8,41 @@ site = Blueprint('site', __name__, template_folder='site_templates')
 @site.route('/', methods = ['POST', 'GET'])
 def home():
     if request.method == 'POST':
-        tag = request.form['tag']
-        sortby = request.form['sortby']
-        dir = request.form['direction']
-        redirect(url_for('site.ping'))
-        return redirect(url_for('site.post', tag=tag, sortby=sortby, dir=dir))
+        tags = request.form['tag']   #need to add if statements to call upon object based on what the user inputs
+        sortBy = request.form['sortby']
+        direction = request.form['direction']
+        
+        if not tags:
+            return {"error: Tags parameter is required"}, 400
+
+        tags = tags.split(',')
+        print(tags, sortBy, direction)
+
+        if not sortBy and not direction:
+            blogs = Blogs(tags)
+            if blogs.fetch_posts == False:
+                return {"error: Tags parameter is required"}, 400
+
+        elif not direction:
+            blogs = Blogs(tags, sortBy, 'asc')
+            if blogs.fetch_posts == False:
+                return {"error: Tags parameter is required"}, 400
+            if blogs.check_sortby() == False:
+                return {'error':'sortBy parameter is invalid'}, 400
+
+        else:
+            blogs = Blogs(tags, sortBy, direction)
+            if blogs.fetch_posts == False:
+                return {"error: Tags parameter is required"}, 400
+            if blogs.check_sortby() == False:
+                return {'error':'sortBy parameter is invalid'}, 400
+            if blogs.check_dir() == False:
+                return {'error':'direction parameter is invalid'}, 400
+
+        #checking tag verification 
+        blogs.fetch_posts()
+        return blogs.get_posts()
+        
         
     else:
         return render_template('index.html')
@@ -23,12 +53,44 @@ def ping():
     ping = requests.get(f'https://api.hatchways.io/assessment/blog/posts?tag=tech').status_code
     if ping == 200:
         print({'success':True}, 200)
-        # return (f"<h1>{ping}</h1>")
+
     return {'failure': False}, 400
 
 
-@site.route('/<tag>,<sortby>,<dir>')
-def post(tag, sortby, dir):
-    blogs = Blogs([tag], sortby, dir)
-    print(blogs)
-    return render_template('index.html', blogs = blogs)
+@site.route('/posts', methods = ['GET']) 
+def post():
+    #Grabbing the parameters 
+    tags = request.args.get('tags')
+    sortBy = request.args.get('sortBy')
+    direction = request.args.get('direction')
+
+    if not tags:
+        return {"error: Tags parameter is required"}, 400
+
+    tags = tags.split(',')
+    print(tags, sortBy, direction)
+
+    if not sortBy and not direction:
+        blogs = Blogs(tags)
+        if blogs.fetch_posts == False:
+            return {"error: Tags parameter is required"}, 400
+
+    elif not direction:
+        blogs = Blogs(tags, sortBy, 'asc')
+        if blogs.fetch_posts == False:
+            return {"error: Tags parameter is required"}, 400
+        if blogs.check_sortby() == False:
+            return {'error':'sortBy parameter is invalid'}, 400
+
+    else:
+        blogs = Blogs(tags, sortBy, direction)
+        if blogs.fetch_posts == False:
+            return {"error: Tags parameter is required"}, 400
+        if blogs.check_sortby() == False:
+            return {'error':'sortBy parameter is invalid'}, 400
+        if blogs.check_dir() == False:
+            return {'error':'direction parameter is invalid'}, 400
+
+    #checking tag verification 
+    blogs.fetch_posts()
+    return blogs.get_posts()  
