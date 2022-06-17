@@ -17,13 +17,13 @@ Activate Python virtual env AND set Flask ENV variables in terminal/CMD:
   Mac
 
     source <name_of_your_env>/bin/activate
-    export FLASK_APP=hatch_api
+    export FLASK_APP=blog_inventory
     export FLASK_ENV=development
 
   Windows
 
     <name_of_your_env>\Scripts\activate.bat
-    set FLASK_APP=hatch_api
+    set FLASK_APP=blog_inventory
     set FLASK_ENV=development
 
 Install dependencies:
